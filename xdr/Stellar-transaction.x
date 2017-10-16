@@ -159,6 +159,7 @@ struct SetOptionsOp
 struct GiveSignersAccessOp
 {
     AccountID friendID; //friend account id
+    int64 timeFrames;
 };
 
 /* Deletes all signers from source account
@@ -576,7 +577,9 @@ enum GiveSignersAccessResultCode
     GIVE_SIGNERS_ACCESS_LOW_RESERVE = -1,
 	GIVE_SIGNERS_ACCESS_FRIEND_IS_SOURCE = -2,
     GIVE_SIGNERS_ACCESS_FRIEND_DOESNT_EXIST = -3,
-    GIVE_SIGNERS_ACCESS_ACCESS_SRC_NOT_AUTHORISED = -4
+    GIVE_SIGNERS_ACCESS_ACCESS_SRC_NOT_AUTHORISED = -4,
+    GIVE_SIGNERS_ACCESS_SIGNERS_ACCESS_ALREADY_EXISTS = -5,
+    GIVE_SIGNERS_ACCESS_TIME_FRAMES_EQUAL_OR_LESS_THEN_CURRENT_TIME = -6
 };
 
 union GiveSignersAccessResult switch (GiveSignersAccessResultCode code)
@@ -597,7 +600,8 @@ enum SetSignersResultCode
     SET_SIGNERS_FRIEND_IS_SOURCE = -3,
     SET_SIGNERS_ACCESS_GIVER_DOESNT_EXIST = -4,
     SET_SIGNERS_ACCESS_ENTRY_DOESNT_EXIST = -5,
-    SET_SIGNERS_BAD_SIGNER = -6
+    SET_SIGNERS_BAD_SIGNER = -6,
+    SET_SIGNERS_CURRENT_TIME_NOT_WITHIN_ACCESS_TIME_FRAMES = -7
 };
 
 union SetSignersResult switch (SetSignersResultCode code)

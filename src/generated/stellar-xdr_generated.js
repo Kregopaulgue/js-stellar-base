@@ -1,4 +1,4 @@
-// Automatically generated on 2017-10-05T14:05:28+03:00
+// Automatically generated on 2017-10-16T15:08:00+03:00
 // DO NOT EDIT or your changes may be overwritten
 
 /* jshint maxstatements:2147483647  */
@@ -195,11 +195,13 @@ xdr.struct("SetOptionsOp", [
 //   struct GiveSignersAccessOp
 //   {
 //       AccountID friendID; //friend account id
+//       int64 timeFrames;
 //   };
 //
 // ===========================================================================
 xdr.struct("GiveSignersAccessOp", [
   ["friendId", xdr.lookup("AccountId")],
+  ["timeFrames", xdr.lookup("Int64")],
 ]);
 
 // === xdr source ============================================================
@@ -1020,7 +1022,9 @@ xdr.union("SetOptionsResult", {
 //       GIVE_SIGNERS_ACCESS_LOW_RESERVE = -1,
 //   	GIVE_SIGNERS_ACCESS_FRIEND_IS_SOURCE = -2,
 //       GIVE_SIGNERS_ACCESS_FRIEND_DOESNT_EXIST = -3,
-//       GIVE_SIGNERS_ACCESS_ACCESS_SRC_NOT_AUTHORISED = -4
+//       GIVE_SIGNERS_ACCESS_ACCESS_SRC_NOT_AUTHORISED = -4,
+//       GIVE_SIGNERS_ACCESS_SIGNERS_ACCESS_ALREADY_EXISTS = -5,
+//       GIVE_SIGNERS_ACCESS_TIME_FRAMES_EQUAL_OR_LESS_THEN_CURRENT_TIME = -6
 //   };
 //
 // ===========================================================================
@@ -1030,6 +1034,8 @@ xdr.enum("GiveSignersAccessResultCode", {
   giveSignersAccessFriendIsSource: -2,
   giveSignersAccessFriendDoesntExist: -3,
   giveSignersAccessAccessSrcNotAuthorised: -4,
+  giveSignersAccessSignersAccessAlreadyExist: -5,
+  giveSignersAccessTimeFramesEqualOrLessThenCurrentTime: -6,
 });
 
 // === xdr source ============================================================
@@ -1064,7 +1070,8 @@ xdr.union("GiveSignersAccessResult", {
 //       SET_SIGNERS_FRIEND_IS_SOURCE = -3,
 //       SET_SIGNERS_ACCESS_GIVER_DOESNT_EXIST = -4,
 //       SET_SIGNERS_ACCESS_ENTRY_DOESNT_EXIST = -5,
-//       SET_SIGNERS_BAD_SIGNER = -6
+//       SET_SIGNERS_BAD_SIGNER = -6,
+//       SET_SIGNERS_CURRENT_TIME_NOT_WITHIN_ACCESS_TIME_FRAMES = -7
 //   };
 //
 // ===========================================================================
@@ -1076,6 +1083,7 @@ xdr.enum("SetSignersResultCode", {
   setSignersAccessGiverDoesntExist: -4,
   setSignersAccessEntryDoesntExist: -5,
   setSignersBadSigner: -6,
+  setSignersCurrentTimeNotWithinAccessTimeFrame: -7,
 });
 
 // === xdr source ============================================================
@@ -2593,6 +2601,8 @@ xdr.union("SignersAccessEntryExt", {
 //       AccountID accessGiverID; // source account id that gives access
 //       AccountID accessTakerID; // friend account id that takes access
 //   
+//       int64 timeFrames;
+//   
 //       // reserved for future use
 //       union switch (int v)
 //       {
@@ -2606,6 +2616,7 @@ xdr.union("SignersAccessEntryExt", {
 xdr.struct("SignersAccessEntry", [
   ["accessGiverId", xdr.lookup("AccountId")],
   ["accessTakerId", xdr.lookup("AccountId")],
+  ["timeFrames", xdr.lookup("Int64")],
   ["ext", xdr.lookup("SignersAccessEntryExt")],
 ]);
 
@@ -3199,12 +3210,14 @@ xdr.struct("LedgerKeyData", [
 //       {
 //           AccountID accessGiverID;
 //           AccountID accessTakerID;
+//           int64 timeFrames;
 //       }
 //
 // ===========================================================================
 xdr.struct("LedgerKeySignersAccess", [
   ["accessGiverId", xdr.lookup("AccountId")],
   ["accessTakerId", xdr.lookup("AccountId")],
+  ["timeFrames", xdr.lookup("Int64")],
 ]);
 
 // === xdr source ============================================================
@@ -3243,6 +3256,7 @@ xdr.struct("LedgerKeySignersAccess", [
 //       {
 //           AccountID accessGiverID;
 //           AccountID accessTakerID;
+//           int64 timeFrames;
 //       } signersAccess;
 //   };
 //
