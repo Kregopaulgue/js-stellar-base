@@ -538,7 +538,7 @@ export class Operation {
 
       let attributes = {};
       attributes.friendId = Keypair.fromPublicKey(opts.friendId).xdrAccountId();
-      attributes.timeFrames = secondsSinceEpoch;
+      attributes.timeFrames = this._toXDRAmount(secondsSinceEpoch);
       let giveSignersAccess = new xdr.GiveSignersAccessOp(attributes);
 
       let opAttributes = {};
@@ -756,6 +756,7 @@ export class Operation {
       case "giveAccess":
       result.type = "giveAccess";
       result.friendId = accountIdtoAddress(attrs.friendId());
+      result.timeFrames = this._fromXDRAmount(attrs.timeFrames());
       break;
       case "setSigner":
       let signer = {};
