@@ -514,7 +514,7 @@ export class Operation {
      * Returns a XDR giveSignersAccessOp. A "give signers access" operation creates signers access
      * @param {object} opts
      * @param {string} opts.friendId - id of account you want to give access to
-     * @param {string} opts.timeFrames - time till which access is available
+     * @param {Date} opts.timeFrames - time till which access is available
      * @param {string} [opts.source] - The source account (defaults to transaction source).
      * @throws {Error} Throws `Error` when the friend account doesnt exist
      * @returns {xdr.giveSignersAccessOp}
@@ -522,16 +522,21 @@ export class Operation {
 
   static giveAccess(opts) {
 
+        if (!StrKey.isValidEd25519PublicKey(opts.source)) {
+            throw new Error("source id is invalid");
+        }
+
         if (!StrKey.isValidEd25519PublicKey(opts.friendId)) {
             throw new Error("friend id is invalid");
         }
 
-        if (this._toXDRAmount(opts.timeFrames) <= Date.now()) {
-          throw new Error("invalid time frames")
+        if (opts.timeFrames.getTime() <= Date.now()) {
+          throw new Error("invalid time frames");
         }
+
         let attributes = {};
         attributes.friendId = Keypair.fromPublicKey(opts.friendId).xdrAccountId();
-        attributes.timeFrames = this._toXDRAmount(opts.timeFrames);
+        attributes.timeFrames = this._toXDRAmount(String(Math.floor(opts.timeFrames.getTime() / 1000)));
         let giveSignersAccess = new xdr.GiveSignersAccessOp(attributes);
 
         let opAttributes = {};

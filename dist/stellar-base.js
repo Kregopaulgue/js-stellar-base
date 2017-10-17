@@ -224,7 +224,7 @@ var StellarBase =
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	// Automatically generated on 2017-10-05T14:05:28+03:00
+	// Automatically generated on 2017-10-16T15:08:00+03:00
 	// DO NOT EDIT or your changes may be overwritten
 	/* jshint maxstatements:2147483647  */ /* jshint esnext:true  */"use strict";Object.defineProperty(exports,"__esModule",{value:true});function _interopRequireWildcard(obj){if(obj && obj.__esModule){return obj;}else {var newObj={};if(obj != null){for(var key in obj) {if(Object.prototype.hasOwnProperty.call(obj,key))newObj[key] = obj[key];}}newObj["default"] = obj;return newObj;}}var _jsXdr=__webpack_require__(3);var XDR=_interopRequireWildcard(_jsXdr);var types=XDR.config(function(xdr){ // === xdr source ============================================================
 	//
@@ -344,10 +344,11 @@ var StellarBase =
 	//   struct GiveSignersAccessOp
 	//   {
 	//       AccountID friendID; //friend account id
+	//       int64 timeFrames;
 	//   };
 	//
 	// ===========================================================================
-	xdr.struct("GiveSignersAccessOp",[["friendId",xdr.lookup("AccountId")]]); // === xdr source ============================================================
+	xdr.struct("GiveSignersAccessOp",[["friendId",xdr.lookup("AccountId")],["timeFrames",xdr.lookup("Int64")]]); // === xdr source ============================================================
 	//
 	//   struct SetSignersOp
 	//   {
@@ -851,11 +852,13 @@ var StellarBase =
 	//       GIVE_SIGNERS_ACCESS_LOW_RESERVE = -1,
 	//   	GIVE_SIGNERS_ACCESS_FRIEND_IS_SOURCE = -2,
 	//       GIVE_SIGNERS_ACCESS_FRIEND_DOESNT_EXIST = -3,
-	//       GIVE_SIGNERS_ACCESS_ACCESS_SRC_NOT_AUTHORISED = -4
+	//       GIVE_SIGNERS_ACCESS_ACCESS_SRC_NOT_AUTHORISED = -4,
+	//       GIVE_SIGNERS_ACCESS_SIGNERS_ACCESS_ALREADY_EXISTS = -5,
+	//       GIVE_SIGNERS_ACCESS_TIME_FRAMES_EQUAL_OR_LESS_THEN_CURRENT_TIME = -6
 	//   };
 	//
 	// ===========================================================================
-	xdr["enum"]("GiveSignersAccessResultCode",{giveSignersAccessSuccess:0,giveSignersAccessLowReserve:-1,giveSignersAccessFriendIsSource:-2,giveSignersAccessFriendDoesntExist:-3,giveSignersAccessAccessSrcNotAuthorised:-4}); // === xdr source ============================================================
+	xdr["enum"]("GiveSignersAccessResultCode",{giveSignersAccessSuccess:0,giveSignersAccessLowReserve:-1,giveSignersAccessFriendIsSource:-2,giveSignersAccessFriendDoesntExist:-3,giveSignersAccessAccessSrcNotAuthorised:-4,giveSignersAccessSignersAccessAlreadyExist:-5,giveSignersAccessTimeFramesEqualOrLessThenCurrentTime:-6}); // === xdr source ============================================================
 	//
 	//   union GiveSignersAccessResult switch (GiveSignersAccessResultCode code)
 	//   {
@@ -876,11 +879,12 @@ var StellarBase =
 	//       SET_SIGNERS_FRIEND_IS_SOURCE = -3,
 	//       SET_SIGNERS_ACCESS_GIVER_DOESNT_EXIST = -4,
 	//       SET_SIGNERS_ACCESS_ENTRY_DOESNT_EXIST = -5,
-	//       SET_SIGNERS_BAD_SIGNER = -6
+	//       SET_SIGNERS_BAD_SIGNER = -6,
+	//       SET_SIGNERS_CURRENT_TIME_NOT_WITHIN_ACCESS_TIME_FRAMES = -7
 	//   };
 	//
 	// ===========================================================================
-	xdr["enum"]("SetSignersResultCode",{setSignersSuccess:0,setSignersLowReserve:-1,setSignersInvalidAccess:-2,setSignersFriendIsSource:-3,setSignersAccessGiverDoesntExist:-4,setSignersAccessEntryDoesntExist:-5,setSignersBadSigner:-6}); // === xdr source ============================================================
+	xdr["enum"]("SetSignersResultCode",{setSignersSuccess:0,setSignersLowReserve:-1,setSignersInvalidAccess:-2,setSignersFriendIsSource:-3,setSignersAccessGiverDoesntExist:-4,setSignersAccessEntryDoesntExist:-5,setSignersBadSigner:-6,setSignersCurrentTimeNotWithinAccessTimeFrame:-7}); // === xdr source ============================================================
 	//
 	//   union SetSignersResult switch (SetSignersResultCode code)
 	//   {
@@ -1808,6 +1812,8 @@ var StellarBase =
 	//       AccountID accessGiverID; // source account id that gives access
 	//       AccountID accessTakerID; // friend account id that takes access
 	//   
+	//       int64 timeFrames;
+	//   
 	//       // reserved for future use
 	//       union switch (int v)
 	//       {
@@ -1818,7 +1824,7 @@ var StellarBase =
 	//   };
 	//
 	// ===========================================================================
-	xdr.struct("SignersAccessEntry",[["accessGiverId",xdr.lookup("AccountId")],["accessTakerId",xdr.lookup("AccountId")],["ext",xdr.lookup("SignersAccessEntryExt")]]); // === xdr source ============================================================
+	xdr.struct("SignersAccessEntry",[["accessGiverId",xdr.lookup("AccountId")],["accessTakerId",xdr.lookup("AccountId")],["timeFrames",xdr.lookup("Int64")],["ext",xdr.lookup("SignersAccessEntryExt")]]); // === xdr source ============================================================
 	//
 	//   union switch (LedgerEntryType type)
 	//       {
@@ -2203,10 +2209,11 @@ var StellarBase =
 	//       {
 	//           AccountID accessGiverID;
 	//           AccountID accessTakerID;
+	//           int64 timeFrames;
 	//       }
 	//
 	// ===========================================================================
-	xdr.struct("LedgerKeySignersAccess",[["accessGiverId",xdr.lookup("AccountId")],["accessTakerId",xdr.lookup("AccountId")]]); // === xdr source ============================================================
+	xdr.struct("LedgerKeySignersAccess",[["accessGiverId",xdr.lookup("AccountId")],["accessTakerId",xdr.lookup("AccountId")],["timeFrames",xdr.lookup("Int64")]]); // === xdr source ============================================================
 	//
 	//   union LedgerKey switch (LedgerEntryType type)
 	//   {
@@ -2242,6 +2249,7 @@ var StellarBase =
 	//       {
 	//           AccountID accessGiverID;
 	//           AccountID accessTakerID;
+	//           int64 timeFrames;
 	//       } signersAccess;
 	//   };
 	//
@@ -30922,6 +30930,7 @@ var StellarBase =
 	     * Returns a XDR giveSignersAccessOp. A "give signers access" operation creates signers access
 	     * @param {object} opts
 	     * @param {string} opts.friendId - id of account you want to give access to
+	     * @param {Date} opts.timeFrames - time till which access is available
 	     * @param {string} [opts.source] - The source account (defaults to transaction source).
 	     * @throws {Error} Throws `Error` when the friend account doesnt exist
 	     * @returns {xdr.giveSignersAccessOp}
@@ -30932,15 +30941,20 @@ var StellarBase =
 	    value: function giveAccess(opts) {
 
 	      if (!_strkey.StrKey.isValidEd25519PublicKey(opts.source)) {
-	        throw new Error("Source address is invalid");
+	        throw new Error("source id is invalid");
 	      }
 
 	      if (!_strkey.StrKey.isValidEd25519PublicKey(opts.friendId)) {
-	        throw new Error("accessGiver is invalid");
+	        throw new Error("friend id is invalid");
+	      }
+
+	      if (opts.timeFrames.getTime() <= Date.now()) {
+	        throw new Error("invalid time frames");
 	      }
 
 	      var attributes = {};
 	      attributes.friendId = _keypair.Keypair.fromPublicKey(opts.friendId).xdrAccountId();
+	      attributes.timeFrames = this._toXDRAmount(String(Math.floor(opts.timeFrames.getTime() / 1000)));
 	      var giveSignersAccess = new _generatedStellarXdr_generated2["default"].GiveSignersAccessOp(attributes);
 
 	      var opAttributes = {};
@@ -31161,6 +31175,7 @@ var StellarBase =
 	        case "giveAccess":
 	          result.type = "giveAccess";
 	          result.friendId = accountIdtoAddress(attrs.friendId());
+	          result.timeFrames = this._fromXDRAmount(attrs.timeFrames());
 	          break;
 	        case "setSigner":
 	          var signer = {};

@@ -772,6 +772,8 @@ describe('Operation', function() {
     describe(".giveSignersAccess()", function () {
         it("creates a signers access", function () {
 
+            var dateFrames = new Date(1508248594000);
+
             var first_opts = {
                 destination: "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ",
                 startingBalance: "10000000"
@@ -784,10 +786,11 @@ describe('Operation', function() {
 
             var access_opts = {
                 friendId: "GDGU5OAPHNPU5UCLE5RDJHG7PXZFQYWKCFOEXSXNMR6KRQRI5T6XXCD7",
+                timeFrames: dateFrames,
                 source: "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ"
             }
-            let firstAccountCreatingOp = StellarBase.Operation.createAccount(first_opts);
-            let secondAccountCreatingOp = StellarBase.Operation.createAccount(second_opts);
+            //let firstAccountCreatingOp = StellarBase.Operation.createAccount(first_opts);
+            //let secondAccountCreatingOp = StellarBase.Operation.createAccount(second_opts);
             let accessGivingOp = StellarBase.Operation.giveAccess(access_opts);
 
 
@@ -795,8 +798,14 @@ describe('Operation', function() {
             var accessGivingOperation = StellarBase.xdr.Operation.fromXDR(new Buffer(xdr, "hex"));
             var obj = StellarBase.Operation.fromXDRObject(accessGivingOperation);
 
+            //there are problems with zeros
+            //have to fix it
+
             expect(obj.type).to.be.equal("giveAccess");
             expect(obj.friendId).to.be.equal(second_opts.destination);
+            expect(accessGivingOperation.body().value().timeFrames().toString()).to.be.equal(String(dateFrames.getTime() * 10000));
+            expect(obj.timeFrames).to.be.equal(String(dateFrames.getTime() / 1000));
+
         });
 
         it("fails to create signers access operation with an invalid friend address", function () {
@@ -804,7 +813,7 @@ describe('Operation', function() {
                 friendId: 'GCEZW',
                 source: 'GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ'
             };
-            expect(() => StellarBase.Operation.giveAccess(opts)).to.throw(/accessGiver is invalid/)
+            expect(() => StellarBase.Operation.giveAccess(opts)).to.throw(/friend id is invalid/)
         });
 
         it("fails to create createAccount operation with an invalid source address", function () {
@@ -813,12 +822,15 @@ describe('Operation', function() {
                 startingBalance: '20',
                 source: 'GCEZ'
             };
-            expect(() => StellarBase.Operation.giveAccess(opts)).to.throw(/Source address is invalid/)
+            expect(() => StellarBase.Operation.giveAccess(opts)).to.throw(/source id is invalid/)
         });
     });
 
     describe(".setSigners()", function () {
         it("set signers for another friend account", function () {
+
+            var dateFrames = new Date(1508248594000);
+
             var first_opts = {
                 destination: "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ",
                 startingBalance: "10000000"
@@ -831,6 +843,7 @@ describe('Operation', function() {
 
             var access_opts = {
                 friendId: "GDGU5OAPHNPU5UCLE5RDJHG7PXZFQYWKCFOEXSXNMR6KRQRI5T6XXCD7",
+                timeFrames: dateFrames,
                 source: "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ"
             };
 
