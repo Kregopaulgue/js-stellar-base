@@ -830,23 +830,9 @@ describe('Operation', function() {
     describe(".setSigners()", function () {
         it("set signers for another friend account", function () {
 
-            var dateFrames = new Date(Date.now() + 100000);
+            var milisecondsForTest = 20 * 1000;
 
-            var first_opts = {
-                destination: "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ",
-                startingBalance: "10000000"
-            };
-
-            var second_opts = {
-                destination: "GDGU5OAPHNPU5UCLE5RDJHG7PXZFQYWKCFOEXSXNMR6KRQRI5T6XXCD7",
-                startingBalance: "10000000"
-            };
-
-            var access_opts = {
-                friendId: "GDGU5OAPHNPU5UCLE5RDJHG7PXZFQYWKCFOEXSXNMR6KRQRI5T6XXCD7",
-                timeFrames: dateFrames,
-                source: "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ"
-            };
+            var dateFrames = new Date(Date.now() + milisecondsForTest);
 
             var setSignersOpts = {};
 
@@ -859,16 +845,17 @@ describe('Operation', function() {
 
             setSignersOpts.source = "GDGU5OAPHNPU5UCLE5RDJHG7PXZFQYWKCFOEXSXNMR6KRQRI5T6XXCD7";
 
-            let firstAccountCreatingOp = StellarBase.Operation.createAccount(first_opts);
-            let secondAccountCreatingOp = StellarBase.Operation.createAccount(second_opts);
-
-            let accessGivingOp = StellarBase.Operation.giveAccess(access_opts);
-
             let settingSignersOp = StellarBase.Operation.setSigners(setSignersOpts);
 
             var xdr = settingSignersOp.toXDR("hex");
             var accessGivingOperation = StellarBase.xdr.Operation.fromXDR(new Buffer(xdr, "hex"));
-            var obj = StellarBase.Operation.fromXDRObject(accessGivingOperation);
+            var obj = StellarBase.Operation.fromXDRObject(settingSignersOp);
+
+            expect(obj.type).to.be.equal("setSigner");
+            expect(obj.accessGiverId).to.be.equal(setSignersOpts.accessGiverId);
+            expect(obj.signer.ed25519PublicKey).to.be.equal(setSignersOpts.signer.ed25519PublicKey);
+            expect(obj.signer.weight).to.be.equal(setSignersOpts.signer.weight);
+
         });
     });
 
