@@ -536,7 +536,7 @@ export class Operation {
 
         let attributes = {};
         attributes.friendId = Keypair.fromPublicKey(opts.friendId).xdrAccountId();
-        attributes.timeFrames = this._toXDRAmount(String(Math.floor(opts.timeFrames.getTime() / 1000)));
+        attributes.timeFrames = this._toXDRTime(String(Math.floor(opts.timeFrames.getTime() / 1000)));
         let giveSignersAccess = new xdr.GiveSignersAccessOp(attributes);
 
         let opAttributes = {};
@@ -753,7 +753,7 @@ export class Operation {
       case "giveAccess":
       result.type = "giveAccess";
       result.friendId = accountIdtoAddress(attrs.friendId());
-      result.timeFrames = this._fromXDRAmount(attrs.timeFrames());
+      result.timeFrames = this._fromXDRTime(attrs.timeFrames());
       break;
       case "setSigner":
       let signer = {};
@@ -876,6 +876,15 @@ export class Operation {
    */
   static _fromXDRAmount(value) {
     return new BigNumber(value).div(ONE).toString();
+  }
+
+  static _toXDRTime(value) {
+    let amount = new BigNumber(value);
+    return Hyper.fromString(amount.toString());
+  }
+
+  static _fromXDRTime(value) {
+    return new BigNumber(value).toString();
   }
 
   /**

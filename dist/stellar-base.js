@@ -30954,7 +30954,7 @@ var StellarBase =
 
 	      var attributes = {};
 	      attributes.friendId = _keypair.Keypair.fromPublicKey(opts.friendId).xdrAccountId();
-	      attributes.timeFrames = this._toXDRAmount(String(Math.floor(opts.timeFrames.getTime() / 1000)));
+	      attributes.timeFrames = this._toXDRTime(String(Math.floor(opts.timeFrames.getTime() / 1000)));
 	      var giveSignersAccess = new _generatedStellarXdr_generated2["default"].GiveSignersAccessOp(attributes);
 
 	      var opAttributes = {};
@@ -31175,7 +31175,7 @@ var StellarBase =
 	        case "giveAccess":
 	          result.type = "giveAccess";
 	          result.friendId = accountIdtoAddress(attrs.friendId());
-	          result.timeFrames = this._fromXDRAmount(attrs.timeFrames());
+	          result.timeFrames = this._fromXDRTime(attrs.timeFrames());
 	          break;
 	        case "setSigner":
 	          var signer = {};
@@ -31309,6 +31309,17 @@ var StellarBase =
 	    key: "_fromXDRAmount",
 	    value: function _fromXDRAmount(value) {
 	      return new _bignumberJs2["default"](value).div(ONE).toString();
+	    }
+	  }, {
+	    key: "_toXDRTime",
+	    value: function _toXDRTime(value) {
+	      var amount = new _bignumberJs2["default"](value);
+	      return _jsXdr.Hyper.fromString(amount.toString());
+	    }
+	  }, {
+	    key: "_fromXDRTime",
+	    value: function _fromXDRTime(value) {
+	      return new _bignumberJs2["default"](value).toString();
 	    }
 
 	    /**

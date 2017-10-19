@@ -772,7 +772,7 @@ describe('Operation', function() {
     describe(".giveSignersAccess()", function () {
         it("creates a signers access", function () {
 
-            var dateFrames = new Date(1508248594000);
+            var dateFrames = new Date(Date.now() + 20 * 1000);
 
             var first_opts = {
                 destination: "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ",
@@ -788,7 +788,7 @@ describe('Operation', function() {
                 friendId: "GDGU5OAPHNPU5UCLE5RDJHG7PXZFQYWKCFOEXSXNMR6KRQRI5T6XXCD7",
                 timeFrames: dateFrames,
                 source: "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ"
-            }
+            };
             //let firstAccountCreatingOp = StellarBase.Operation.createAccount(first_opts);
             //let secondAccountCreatingOp = StellarBase.Operation.createAccount(second_opts);
             let accessGivingOp = StellarBase.Operation.giveAccess(access_opts);
@@ -801,10 +801,17 @@ describe('Operation', function() {
             //there are problems with zeros
             //have to fix it
 
+            var framesSecondsSinceEpoch = Math.floor(dateFrames.getTime() / 1000);
+
             expect(obj.type).to.be.equal("giveAccess");
             expect(obj.friendId).to.be.equal(second_opts.destination);
-            expect(accessGivingOperation.body().value().timeFrames().toString()).to.be.equal(String(dateFrames.getTime() * 10000));
-            expect(obj.timeFrames).to.be.equal(String(dateFrames.getTime() / 1000));
+
+            console.log(accessGivingOperation.body().value().timeFrames().toString());
+            console.log(framesSecondsSinceEpoch);
+            console.log(obj.timeFrames);
+
+            expect(accessGivingOperation.body().value().timeFrames().toString()).to.be.equal(String(framesSecondsSinceEpoch));
+            expect(obj.timeFrames).to.be.equal(String(framesSecondsSinceEpoch));
 
         });
 
