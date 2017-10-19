@@ -829,7 +829,7 @@ describe('Operation', function() {
     describe(".setSigners()", function () {
         it("set signers for another friend account", function () {
 
-            var dateFrames = new Date(1508248594000);
+            var dateFrames = new Date(Date.now() + 100000);
 
             var first_opts = {
                 destination: "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ",
