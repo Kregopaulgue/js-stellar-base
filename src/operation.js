@@ -531,7 +531,7 @@ export class Operation {
         }
 
         if (opts.timeFrames.getTime() <= Date.now()) {
-          throw new Error("invalid time frames");
+          throw new Error("time frames are invalid");
         }
 
         let attributes = {};

@@ -772,25 +772,16 @@ describe('Operation', function() {
     describe(".giveSignersAccess()", function () {
         it("creates a signers access", function () {
 
-            var dateFrames = new Date(Date.now() + 20 * 1000);
+            var milisecondsForTest = 20 * 1000;
 
-            var first_opts = {
-                destination: "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ",
-                startingBalance: "10000000"
-            };
-
-            var second_opts = {
-                destination: "GDGU5OAPHNPU5UCLE5RDJHG7PXZFQYWKCFOEXSXNMR6KRQRI5T6XXCD7",
-                startingBalance: "10000000"
-            };
+            var dateFrames = new Date(Date.now() + milisecondsForTest);
 
             var access_opts = {
                 friendId: "GDGU5OAPHNPU5UCLE5RDJHG7PXZFQYWKCFOEXSXNMR6KRQRI5T6XXCD7",
                 timeFrames: dateFrames,
                 source: "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ"
             };
-            //let firstAccountCreatingOp = StellarBase.Operation.createAccount(first_opts);
-            //let secondAccountCreatingOp = StellarBase.Operation.createAccount(second_opts);
+
             let accessGivingOp = StellarBase.Operation.giveAccess(access_opts);
 
 
@@ -798,17 +789,10 @@ describe('Operation', function() {
             var accessGivingOperation = StellarBase.xdr.Operation.fromXDR(new Buffer(xdr, "hex"));
             var obj = StellarBase.Operation.fromXDRObject(accessGivingOperation);
 
-            //there are problems with zeros
-            //have to fix it
-
             var framesSecondsSinceEpoch = Math.floor(dateFrames.getTime() / 1000);
 
             expect(obj.type).to.be.equal("giveAccess");
-            expect(obj.friendId).to.be.equal(second_opts.destination);
-
-            console.log(accessGivingOperation.body().value().timeFrames().toString());
-            console.log(framesSecondsSinceEpoch);
-            console.log(obj.timeFrames);
+            expect(obj.friendId).to.be.equal(access_opts.friendId);
 
             expect(accessGivingOperation.body().value().timeFrames().toString()).to.be.equal(String(framesSecondsSinceEpoch));
             expect(obj.timeFrames).to.be.equal(String(framesSecondsSinceEpoch));
@@ -823,14 +807,24 @@ describe('Operation', function() {
             expect(() => StellarBase.Operation.giveAccess(opts)).to.throw(/friend id is invalid/)
         });
 
+        it("fails to create signers access operation with invalid time frames", function () {
+            var access_opts = {
+                friendId: "GDGU5OAPHNPU5UCLE5RDJHG7PXZFQYWKCFOEXSXNMR6KRQRI5T6XXCD7",
+                timeFrames: new Date(Date.now() - 2000),
+                source: "GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ"
+            };
+            expect(() => StellarBase.Operation.giveAccess(access_opts)).to.throw(/time frames are invalid/)
+        });
+
         it("fails to create createAccount operation with an invalid source address", function () {
             let opts = {
                 destination: 'GCEZWKCA5VLDNRLN3RPRJMRZOX3Z6G5CHCGSNFHEYVXM3XOJMDS674JZ',
                 startingBalance: '20',
                 source: 'GCEZ'
             };
-            expect(() => StellarBase.Operation.giveAccess(opts)).to.throw(/source id is invalid/)
+            expect(() => StellarBase.Operation.createAccount(opts)).to.throw(/Source address is invalid/)
         });
+
     });
 
     describe(".setSigners()", function () {

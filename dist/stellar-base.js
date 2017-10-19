@@ -30949,7 +30949,7 @@ var StellarBase =
 	      }
 
 	      if (opts.timeFrames.getTime() <= Date.now()) {
-	        throw new Error("invalid time frames");
+	        throw new Error("time frames are invalid");
 	      }
 
 	      var attributes = {};
